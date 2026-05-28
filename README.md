@@ -149,6 +149,19 @@ forza/
   workbook.py    builds the styled Excel
   search.py      free web-refresh agent (+ optional Claude)
 generate_tierlist.py   command-line entry point
-data/            canonical data (cars.json, changelog.json) — edits accumulate here
-output/          the generated FH6_Tier_List.xlsx
+data/            cars.json — generated locally from seed.py (gitignored)
+output/          generated FH6_Tier_List.xlsx (gitignored)
 ```
+
+The curated data lives in `forza/seed.py` (the single source of truth). `data/`
+and `output/` are regenerated on every run and are not committed.
+
+---
+
+## License
+
+[MIT](LICENSE) — free to use, modify, and share with attribution.
+
+This is an unofficial fan-made project and is not affiliated with, endorsed by,
+or associated with Microsoft, Xbox Game Studios, Playground Games, or the Forza
+franchise. Car rankings are community opinion compiled from public sources.

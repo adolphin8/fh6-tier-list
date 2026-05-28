@@ -14,7 +14,6 @@ overwrites the curated data.
 from __future__ import annotations
 
 import argparse
-import datetime as _dt
 import os
 
 from forza import models, seed, search, workbook
@@ -60,9 +59,9 @@ def main() -> None:
     cars, meta = _ensure_data(args.reseed)
 
     if args.refresh:
+        # Read-only: prints proposed updates; never edits the dataset on disk
+        # (so it can't dirty your working tree and block `git pull`).
         search.refresh(cars, use_claude=not args.no_claude)
-        meta["last_updated"] = _dt.date.today().isoformat()
-        models.save_cars(cars, meta)
 
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
     path = workbook.build_workbook(cars, meta, args.out)

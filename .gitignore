@@ -5,3 +5,7 @@ venv/
 .DS_Store
 *.tmp
 ~$*.xlsx
+
+# Generated locally on every run — never commit (it would block git pull).
+output/
+data/cars.json

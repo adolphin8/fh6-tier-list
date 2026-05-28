@@ -1,8 +1,9 @@
 """Data model for the tier list, plus JSON load/save.
 
-The canonical data lives in ``data/cars.json``. On first run it is seeded from
-``forza.seed``. Refreshes (``forza.search``) update the JSON in place and append
-to ``data/changelog.json`` so your edits and new metas accumulate over time.
+The curated data lives in ``forza.seed`` (the source of truth). On first run it is
+written to ``data/cars.json`` (a local, gitignored cache). The web refresh
+(``forza.search``) is read-only — it prints proposed updates to the terminal and
+never edits the data on disk.
 """
 
 from __future__ import annotations
@@ -10,7 +11,7 @@ from __future__ import annotations
 import dataclasses
 import json
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
 
 # --- Fixed vocabularies (FH6) ------------------------------------------------

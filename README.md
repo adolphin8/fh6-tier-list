@@ -10,8 +10,8 @@ bands, acquisition info, per-car tuning specs, and community share codes. It can
 also **scan the web** (guide sites, Reddit) for new metas and tunes whenever you
 run it.
 
-> The data is **Forza Horizon 6** (open-world, Japan map, released 2026‑05‑19),
-> despite the repo name. It is *not* Forza Motorsport 6.
+> This covers **Forza Horizon 6** (open-world, Japan map, released 2026‑05‑19) —
+> not Forza Motorsport 6.
 
 ---
 
@@ -52,8 +52,8 @@ You don't need any paid API — it runs 100% free.
 ```bash
 # 1. Install Python 3.10+  (Windows: python.org and tick "Add Python to PATH")
 # 2. Get the code:
-git clone https://github.com/adolphin8/Forza6Cars.git
-cd Forza6Cars
+git clone https://github.com/adolphin8/fh6-tier-list.git
+cd fh6-tier-list
 
 # 3. Install dependencies (one time):
 pip install -r requirements.txt        # use pip3 / python3 on macOS/Linux

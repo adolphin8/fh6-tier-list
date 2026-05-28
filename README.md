@@ -15,12 +15,11 @@ run it.
 
 ---
 
-## Preview
+## What it produces
 
-A ready-made snapshot lives at
-**[`examples/FH6_Tier_List_sample.xlsx`](examples/FH6_Tier_List_sample.xlsx)** —
-download it to see exactly what the tool produces. Opens in Excel, Google Sheets,
-Numbers, or the free mobile Excel app. (Run the tool yourself for the latest data.)
+Run the tool (see [Quick start](#quick-start) — about 10 seconds) to generate
+`output/FH6_Tier_List.xlsx`. It opens in Excel, Google Sheets, Numbers, or the
+free mobile Excel app.
 
 The workbook has **five tabs**:
 
@@ -136,7 +135,6 @@ forza/
   workbook.py    builds the styled Excel
   search.py      free web-refresh agent (+ optional Claude)
 generate_tierlist.py   command-line entry point
-examples/        a committed sample workbook (preview)
 data/, output/   generated locally on each run (gitignored)
 ```
 

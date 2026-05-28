@@ -29,23 +29,48 @@ from .models import Car
 GAME = "Forza Horizon 6"
 
 QUERIES = [
-    f"{GAME} best cars tier list",
+    f"{GAME} best cars tier list 2026",
     f"{GAME} fastest car each class",
-    f"{GAME} meta update patch cars",
-    f"{GAME} best drift car tune",
+    f"{GAME} meta nerf buff patch notes",
+    f"{GAME} best drift car tune setup",
     f"{GAME} best drag car",
     f"{GAME} best rally car",
     f"{GAME} best cross country car",
     f"{GAME} tune share code",
+    f"{GAME} new cars added playlist",
 ]
 
-SUBREDDITS = ["ForzaHorizon", "forza"]
+SUBREDDITS = ["ForzaHorizon", "ForzaHorizon6", "forza"]
 
 # Keywords that hint a finding is meta-relevant enough to surface for review.
 SIGNAL_WORDS = [
     "tier", "best", "meta", "patch", "update", "nerf", "buff", "fastest",
-    "tune", "build", "broken", "op", "season", "playlist", "festival",
+    "tune", "code", "build", "broken", "op", "season", "playlist", "festival",
 ]
+
+# Substrings that mean the result is about a DIFFERENT Forza game (noise).
+OTHER_GAME_MARKERS = ["horizon 5", "horizon 4", "horizon 3", "fh5", "fh4", "fh3",
+                      "motorsport", "forza 7", "fm "]
+
+
+def _is_other_game(text: str) -> bool:
+    low = text.lower()
+    if "horizon 6" in low or "fh6" in low:
+        return False
+    return any(m in low for m in OTHER_GAME_MARKERS)
+
+
+def _classify(text: str) -> str:
+    low = text.lower()
+    if "code" in low:
+        return "Tune-code lead"
+    if any(w in low for w in ("nerf", "buff", "patch", "update", "hotfix")):
+        return "Patch / meta shift"
+    if any(w in low for w in ("new car", "added", "playlist", "season", "festival")):
+        return "New content"
+    if "tune" in low or "build" in low or "setup" in low:
+        return "Tuning guide"
+    return "Tier-list source"
 
 
 def _today() -> str:
@@ -128,27 +153,27 @@ def _relevant(text: str) -> bool:
 
 
 def synthesize_rulebased(findings: list[dict], cars: list[Car]) -> list[dict]:
-    """Surface the most relevant findings as proposed changelog entries.
+    """Surface the most relevant findings as proposed entries, grouped by type.
 
     Conservative: it flags things for *you* to review; it does not edit data.
+    Filters out other-Forza-game noise and ranks code/patch leads first.
     """
-    known = {c.name.lower() for c in cars}
+    priority = {"Tune-code lead": 0, "Patch / meta shift": 1, "New content": 2,
+                "Tuning guide": 3, "Tier-list source": 4}
     entries: list[dict] = []
     for f in findings:
         blob = f"{f.get('title','')} {f.get('snippet','')}"
-        if not _relevant(blob):
+        if not _relevant(blob) or _is_other_game(blob):
             continue
-        # Cheap heuristic: does it reference a car we don't already track?
-        note = ""
-        lowered = blob.lower()
-        if not any(name in lowered for name in known):
-            note = "may reference cars not yet in the list — review"
+        kind = _classify(blob)
         entries.append({
             "date": _today(),
-            "type": "Proposed (web)",
-            "summary": (f.get("title", "")[:200] + (f" — {note}" if note else "")),
+            "type": kind,
+            "summary": f.get("title", "")[:200],
             "source": f.get("url", ""),
+            "_rank": priority.get(kind, 9),
         })
+    entries.sort(key=lambda e: e.pop("_rank"))
     # Keep it digestible.
     return entries[:25]
 

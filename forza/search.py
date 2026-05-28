@@ -5,7 +5,7 @@ Goal: scan the live web for FH6 meta shifts and tunes, and report what's new.
 DESIGN PRINCIPLE — never silently corrupt the curated data. The original guide
 warned that most web "FH6 codes" are fake/auto-generated. So this agent does NOT
 overwrite your dataset with scraped strings. Instead it gathers findings and
-writes *proposed* entries to the Changelog for you to review (and, with the Claude
+prints *proposed* updates to the terminal for you to review (and, with the Claude
 upgrade, structured suggestions with citations + a "verify in-game" flag).
 
 Tiers of capability:

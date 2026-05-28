@@ -20,6 +20,7 @@ from . import seed
 from .models import (
     CAR_CLASSES,
     CLASS_COLORS,
+    CLASS_PI_RANGE,
     CONFIDENCE_COLORS,
     DISCIPLINES,
     Car,
@@ -102,7 +103,6 @@ def _overview_sheet(wb: Workbook, meta: dict) -> None:
         ("Edition", meta.get("edition_note", "")),
         ("PI bands", meta.get("pi_bands", "")),
         ("Last updated", meta.get("last_updated", "")),
-        ("Data origin", meta.get("data_origin", "")),
         ("Read this first", meta.get("disclaimer", "")),
     ]
     r = 4
@@ -141,11 +141,10 @@ def _overview_sheet(wb: Workbook, meta: dict) -> None:
     ws.cell(row=r, column=1, value="Sheets").font = Font(bold=True, size=13)
     r += 1
     guide = [
-        ("Tier List", "Every ranked car. Use the filter arrows to sort by class, price, confidence, discipline."),
+        ("Tier List", "Every ranked car with its in-game PI number. Use the filter arrows to sort by class, PI, price, confidence, or discipline."),
         ("Quick Reference", "Discipline x class grid — the top pick in each cell, colour coded."),
-        ("Tuning", "Per-discipline baseline setups, the FH6 Mechanical Balance stat, per-car tune notes, and how to get REAL codes in-game."),
+        ("Tuning", "Per-discipline baseline setups, the FH6 Mechanical Balance stat, per-car tune notes, and where to get real tune codes (marked *)."),
         ("Sources", "What was cross-referenced, and which low-quality sites to distrust."),
-        ("Changelog", "Auto-appended each time you run a web refresh."),
     ]
     for name, desc in guide:
         ws.cell(row=r, column=1, value=name).font = BOLD
@@ -156,16 +155,17 @@ def _overview_sheet(wb: Workbook, meta: dict) -> None:
 def _tier_list_sheet(wb: Workbook, cars: list[Car]) -> None:
     ws = wb.create_sheet("Tier List")
     ws.sheet_view.showGridLines = False
-    headers = ["Discipline", "Class", "#", "Car", "Year", "PI", "Price (CR)",
+    headers = ["Discipline", "Class", "#", "Car", "Year", "PI band", "Price (CR)",
                "Acquisition", "Confidence", "Strengths", "Weaknesses", "Notes", "Sources"]
     _style_header(ws, 1, headers)
     ws.freeze_panes = "A2"
 
     row = 2
     for car in _sorted_cars(cars):
+        pi_display = str(car.pi_value) if car.pi_value else CLASS_PI_RANGE.get(car.car_class, "")
         vals = [
             car.discipline, car.car_class, car.rank, car.display_name(),
-            car.year or "", car.pi, car.price_cr if car.price_cr else "",
+            car.year or "", pi_display, car.price_cr if car.price_cr else "",
             car.acquisition, car.confidence, car.strengths, car.weaknesses,
             car.notes, car.sources,
         ]
@@ -279,20 +279,54 @@ def _tuning_sheet(wb: Workbook, cars: list[Car]) -> None:
         row += 1
 
     row += 1
-    ws.cell(row=row, column=1, value="How to get REAL, current codes (in-game)").font = Font(bold=True, size=13)
+    ws.cell(row=row, column=1, value="Where to get tune codes").font = Font(bold=True, size=13)
     row += 1
     for line in seed.HOW_TO_GET_CODES:
         t = ws.cell(row=row, column=1, value=line)
         ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=5)
         t.alignment = WRAP
-        ws.row_dimensions[row].height = 24
+        ws.row_dimensions[row].height = 22
+        row += 1
+    for label, url in seed.CODE_LINKS:
+        c = ws.cell(row=row, column=1, value=label)
+        c.hyperlink = url
+        c.font = Font(color="0563C1", underline="single")
+        ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=5)
+        ws.row_dimensions[row].height = 20
         row += 1
 
+    # The * legend
+    row += 1
+    leg = ws.cell(row=row, column=1, value=seed.CODE_LEGEND)
+    leg.font = Font(italic=True, color="B45309")
+    leg.alignment = WRAP
+    ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=5)
+    ws.row_dimensions[row].height = 60
+
+    # Real share codes table (community-sourced)
+    if seed.TUNE_CODES:
+        row += 2
+        ws.cell(row=row, column=1, value="Tune share codes (community-sourced *)").font = Font(bold=True, size=13)
+        row += 1
+        _style_header(ws, row, ["Car", "PI", "Share code *", "Best for", "Source"])
+        row += 1
+        for code in seed.TUNE_CODES:
+            vals = [code.get("car", ""), code.get("pi", ""), code.get("code", ""),
+                    code.get("best_for", ""), code.get("source", "")]
+            for i, v in enumerate(vals, start=1):
+                c = ws.cell(row=row, column=i, value=v)
+                c.alignment = WRAP if i in (1, 4) else CENTER
+                c.border = BORDER
+                if i == 3:
+                    c.font = Font(bold=True, name="Consolas")
+            ws.row_dimensions[row].height = 24
+            row += 1
+
     # Per-car tune table
+    row += 2
+    ws.cell(row=row, column=1, value="Per-car tune notes & code source").font = Font(bold=True, size=13)
     row += 1
-    ws.cell(row=row, column=1, value="Per-car tune notes").font = Font(bold=True, size=13)
-    row += 1
-    _style_header(ws, row, ["Car", "Discipline", "Class", "Tune notes", "Share code / status"])
+    _style_header(ws, row, ["Car", "Discipline", "Class", "Tune notes", "Tune code source *"])
     header_row = row
     row += 1
     for car in _sorted_cars(cars):
@@ -356,32 +390,12 @@ def _sources_sheet(wb: Workbook) -> None:
         row += 1
 
 
-def _changelog_sheet(wb: Workbook, changelog: list[dict]) -> None:
-    ws = wb.create_sheet("Changelog")
-    ws.sheet_view.showGridLines = False
-    _style_header(ws, 1, ["Date", "Type", "Summary", "Source"])
-    ws.freeze_panes = "A2"
-    row = 2
-    for entry in changelog:
-        vals = [entry.get("date", ""), entry.get("type", ""),
-                entry.get("summary", ""), entry.get("source", "")]
-        for i, v in enumerate(vals, start=1):
-            c = ws.cell(row=row, column=i, value=v)
-            c.alignment = WRAP
-            c.border = BORDER
-        ws.row_dimensions[row].height = 30
-        row += 1
-    ws.auto_filter.ref = f"A1:D{max(row - 1, 1)}"
-    _set_widths(ws, {1: 14, 2: 16, 3: 70, 4: 28})
-
-
-def build_workbook(cars: list[Car], meta: dict, changelog: list[dict], out_path: str) -> str:
+def build_workbook(cars: list[Car], meta: dict, out_path: str) -> str:
     wb = Workbook()
     _overview_sheet(wb, meta)
     _tier_list_sheet(wb, cars)
     _quick_reference_sheet(wb, cars)
     _tuning_sheet(wb, cars)
     _sources_sheet(wb)
-    _changelog_sheet(wb, changelog)
     wb.save(out_path)
     return out_path

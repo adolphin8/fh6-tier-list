@@ -18,6 +18,12 @@ from typing import Optional
 # Ordered worst -> best so sorting/colouring is consistent.
 CAR_CLASSES = ["D", "C", "B", "A", "S1", "S2", "R"]
 
+# PI band per class — the real "number value" tied to each tier (and your build target).
+CLASS_PI_RANGE = {
+    "D": "100-500", "C": "501-600", "B": "601-700", "A": "701-800",
+    "S1": "801-900", "S2": "901-998", "R": "999",
+}
+
 DISCIPLINES = [
     "Road & Street",
     "Drag & Top Speed",
@@ -62,7 +68,8 @@ class Car:
     car_class: str
     rank: int = 99                       # 1 = best pick in its discipline/class block
     year: Optional[int] = None
-    pi: str = ""                         # e.g. "S2 ~850" or "999"
+    pi: str = ""                         # legacy free-text; PI band is derived from class
+    pi_value: Optional[int] = None       # verified exact PI, if a source publishes one
     price_cr: Optional[int] = None       # credits; None = not purchasable for credits
     acquisition: str = "Autoshow"        # how you get it
     confidence: str = "Moderate"
@@ -92,7 +99,6 @@ class Car:
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(REPO_ROOT, "data")
 CARS_PATH = os.path.join(DATA_DIR, "cars.json")
-CHANGELOG_PATH = os.path.join(DATA_DIR, "changelog.json")
 
 
 def load_cars(path: str = CARS_PATH) -> list[Car]:
@@ -111,18 +117,3 @@ def save_cars(cars: list[Car], meta: dict, path: str = CARS_PATH) -> None:
 def load_meta(path: str = CARS_PATH) -> dict:
     with open(path, "r", encoding="utf-8") as fh:
         return json.load(fh)["meta"]
-
-
-def load_changelog(path: str = CHANGELOG_PATH) -> list[dict]:
-    if not os.path.exists(path):
-        return []
-    with open(path, "r", encoding="utf-8") as fh:
-        return json.load(fh)
-
-
-def append_changelog(entries: list[dict], path: str = CHANGELOG_PATH) -> None:
-    log = load_changelog(path)
-    log.extend(entries)
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as fh:
-        json.dump(log, fh, indent=2, ensure_ascii=False)

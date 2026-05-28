@@ -22,32 +22,28 @@ The workbook has six tabs:
 | **Overview** | What this is, the confidence key, class‑tier colour legend, PI bands. |
 | **Tier List** | Every ranked car. **Tap the filter arrows** to sort by class, price, confidence, or discipline. Class and confidence cells are colour‑coded. |
 | **Quick Reference** | A discipline × class grid — the top pick in each cell. |
-| **Tuning** | Per‑discipline baseline setups, the new **Mechanical Balance** stat, per‑car tune notes, and **how to get real codes in‑game**. |
+| **Tuning** | Per‑discipline baseline setups, the new **Mechanical Balance** stat, a **Tune Codes** table with real community‑sourced share codes (marked `*`), per‑car tune notes, and clickable links to where codes live. |
 | **Sources** | What was cross‑referenced, and which low‑quality sites to distrust. |
-| **Changelog** | Auto‑appended every time you run a web refresh. |
 
 ---
 
 ## About tune share codes (please read)
 
-You asked for tuning codes. Here's the honest situation, carried over from the
-original guide and verified by the sources:
+The **Tuning** sheet has a **Tune Codes** table with real, community‑sourced share
+codes (e.g. from Dexerto), each marked `*`. The `*` means: community‑sourced, not
+verified by us — enter it in‑game and confirm before trusting it. We never
+fabricate codes.
 
-- **Working FH6 tunes live inside the in‑game "Find Tuning Setups" marketplace**,
-  not on the open web.
-- Most websites advertising "FH6 tune codes" are **auto‑generated, invented, or
-  recycled Forza Horizon 5 codes that don't transfer**.
+Why the table isn't huge yet: most sites that host FH6 codes (Dexerto, ForzaFire,
+etc.) block automated reading, so codes are added by hand from screenshots plus
+whatever the web refresh can pull. To grow the list, open the linked code pages on
+your phone, screenshot the rows, and they get added to `forza/seed.py`
+(`TUNE_CODES`). The Tuning sheet also links straight to those pages and gives a
+4‑step recipe for grabbing top‑rated tunes from inside the game.
 
-So this tool **does not fabricate codes**. Instead it gives you, for every top car:
-
-1. **Concrete tune specs** you can dial in yourself (tyre PSI, gearing, camber,
-   ARBs, diff, brake bias) — reliable and future‑proof.
-2. A **Share‑code column** that stays honest: empty with a "build in‑game" status
-   until a *verified* code is found. When you run the web refresh, it can pull
-   codes **only from named, reputable tuners** and tags each **"verify in‑game."**
-
-The **Tuning** sheet also has a 4‑step recipe for grabbing real, current codes
-from inside the game in under a minute.
+Alongside codes, every top car has **concrete tune specs** (tyre PSI, gearing,
+camber, ARBs, diff, brake bias) you can dial in yourself — reliable and
+future‑proof even when a code goes stale.
 
 ---
 

@@ -218,17 +218,18 @@ def synthesize_claude(findings: list[dict], cars: list[Car]) -> Optional[list[di
 # --- Entry point -------------------------------------------------------------
 
 def refresh(cars: list[Car], use_claude: bool = True) -> list[dict]:
-    """Gather findings and return proposed changelog entries (does not edit cars)."""
+    """Scan the web and PRINT any proposed updates for the user to review.
+
+    Deliberately does not edit the dataset — scraped strings (especially "tune
+    codes") are too unreliable to apply automatically. You read the proposals and
+    decide what to fold into forza/seed.py.
+    """
     print("Refreshing from the web (free search)...")
     findings = gather_findings()
     if not findings:
         print("  No web results (offline, rate-limited, or deps missing). "
               "Existing data is unchanged.")
-        return [{
-            "date": _today(), "type": "Refresh",
-            "summary": "Web refresh ran but returned no results (offline/rate-limited).",
-            "source": "",
-        }]
+        return []
 
     entries = None
     if use_claude:
@@ -239,9 +240,13 @@ def refresh(cars: list[Car], use_claude: bool = True) -> list[dict]:
         entries = synthesize_rulebased(findings, cars)
         print(f"  Flagged {len(entries)} finding(s) for review (rule-based).")
 
-    entries.insert(0, {
-        "date": _today(), "type": "Refresh",
-        "summary": f"Scanned {len(findings)} web results across DuckDuckGo + Reddit.",
-        "source": "",
-    })
+    print(f"\n--- Proposed updates ({len(entries)}) — review, then edit forza/seed.py ---")
+    if not entries:
+        print("  Nothing meta-relevant surfaced this run.")
+    for e in entries:
+        line = f"  [{e.get('type','')}] {e.get('summary','')}"
+        if e.get("source"):
+            line += f"\n      {e['source']}"
+        print(line)
+    print("--- end proposed updates ---\n")
     return entries

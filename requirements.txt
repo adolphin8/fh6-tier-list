@@ -1,0 +1,10 @@
+# Core (required) — builds the Excel tier list
+openpyxl>=3.1
+
+# Web search refresh (free, no API key needed)
+requests>=2.31
+ddgs>=9.0          # DuckDuckGo search wrapper (free, no signup)
+
+# OPTIONAL "turbo mode" — only needed if you set ANTHROPIC_API_KEY
+#   pip install anthropic
+# anthropic>=0.40

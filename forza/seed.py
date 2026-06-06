@@ -19,15 +19,15 @@ fold in literal codes if/when reputable ones get posted.
 META = {
     "game": "Forza Horizon 6",
     "edition_note": "Open-world, Japan map. Released 2026-05-19.",
-    "snapshot": "Launch-window meta, curated + web-refreshed (late May 2026).",
+    "snapshot": "Launch-window meta + Series 1 (Welcome to Japan), refreshed early June 2026.",
     "disclaimer": (
-        "Launch-window snapshot, not a settled meta. Rankings will shift as players "
+        "Launch-window snapshot, refreshed against Series 1. Rankings will shift as players "
         "grind and post tunes. Exact per-car PI is rarely published yet, so the PI "
         "column shows each class's band (your build target). Re-verify high-cost buys "
         "in-game."
     ),
     "pi_bands": "D 100-500 | C 501-600 | B 601-700 | A 701-800 | S1 801-900 | S2 901-998 | R 999/track-only",
-    "last_updated": "2026-05-28",
+    "last_updated": "2026-06-05",
 }
 
 # Per-discipline pointer to where REAL tune codes live (marked * in the workbook).
@@ -149,6 +149,13 @@ SEED_CARS = [
          strengths="Leads S2 in raw top speed; best for long straights / speed zones.",
          weaknesses="Needs careful tuning to corner.",
          sources="Game8"),
+    dict(discipline="Road & Street", car_class="S2", rank=4, year=2008,
+         name="Mazda Furai", price_cr=None,
+         acquisition="Festival Playlist Series 1 (80-pt series reward, headline car)",
+         confidence="Strong",
+         strengths="Series 1 standout: planted AWD S2 all-rounder; also builds into R for max speed.",
+         weaknesses="Locked behind Series 1 (80 pts across the 4-week series).",
+         sources="PC Gamer Series 1, Forzafire, gamingpromax"),
     dict(discipline="Road & Street", car_class="R", rank=1, year=2018,
          name="Ferrari FXX-K Evo", price_cr=4_500_000,
          acquisition="Autoshow (also Welcome Pack)", confidence="Strong",
@@ -312,7 +319,14 @@ SEED_CARS = [
          strengths="Reliable AWD out of the box; hard to beat on dirt/rally.",
          weaknesses="Heavier than tuned rivals.",
          sources="gamingpromax"),
-    dict(discipline="Dirt & Rally", car_class="B", rank=3, year=None,
+    dict(discipline="Dirt & Rally", car_class="B", rank=3, year=2006,
+         name="Mitsubishi Lancer Evolution IX MR", price_cr=None,
+         acquisition="Festival Playlist Series 1 Summer (40 pts) — free",
+         confidence="Moderate",
+         strengths="Festival-free upgrade over the VIII MR; newer chassis, same AWD recipe.",
+         weaknesses="Available only by playing Series 1 Summer.",
+         sources="Festival Playlist Series 1"),
+    dict(discipline="Dirt & Rally", car_class="B", rank=4, year=None,
          name="Ford RS200 Evolution", price_cr=None, acquisition="Autoshow / Auction House",
          confidence="Moderate",
          strengths="Short wheelbase, light, huge corner manoeuvrability; proven dirt weapon.",
@@ -480,6 +494,8 @@ CODE_LINKS = [
      "https://www.dexerto.com/wikis/forza-horizon-6/garage-share-codes/"),
     ("ForzaFire — browse all FH6 tunes by car/class/event",
      "https://www.forzafire.com/builds"),
+    ("CODMunity — pro-tested FH6 tune database",
+     "https://codmunity.gg/forza"),
     ("JSR Chronic FH6 Tunes — spreadsheet + Discord (Forza Forums)",
      "https://forums.forza.net/t/jsr-chronic-fh6-tunes-spreadsheet-share-codes-discord/826030"),
     ("r/ForzaHorizon — community posts new tunes after each weekly playlist reset",
